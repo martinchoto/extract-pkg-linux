@@ -1,0 +1,37 @@
+version: 1
+
+AppDir:
+  path: ./AppDir
+  app_info:
+    id: com.martinchoto.pkginstaller
+    name: PKG Installer Tool
+    icon: logo
+    version: 1.0.0
+    exec: usr/bin/python3
+    exec_args: "$APPDIR/src/main.py $@"
+  
+  apt:
+    arch: amd64
+    sources:
+      - sourceline: deb http://archive.ubuntu.com/ubuntu/ jammy main restricted universe
+    include:
+      - python3
+      - python3-tk
+      - python3-pip
+      - python3-setuptools
+      - zenity
+      - libcanberra-gtk-module
+  
+# FIXED: 'script' must be outside of 'AppDir'
+script:
+  - mkdir -p AppDir/src AppDir/bin
+  - cp src/main.py AppDir/src/
+  - cp src/logo.png AppDir/src/
+  - cp bin/pkg_extractor.AppImage AppDir/bin/
+  # We use the host's pip to install into the AppDir
+  - python3 -m pip install --root=AppDir --prefix=/usr customtkinter plyer
+
+AppImage:
+  arch: x86_64
+  update-information: None
+  sign-key: None
